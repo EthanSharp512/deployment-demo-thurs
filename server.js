@@ -11,7 +11,11 @@ var rollbar = new Rollbar({
   captureUnhandledRejections: true,
 })
 
-rollbar.log('Hello world')
+try {
+    nonExistentFunction();
+  } catch (error) {
+    rollbar.critical("nonExistentFunction did not give an output");
+  }
 
 const students = ['Jimmy', 'Timothy', 'Jimothy']
 
@@ -50,11 +54,15 @@ app.post('/api/students', (req, res) => {
 app.delete('/api/students/:index', (req, res) => {
     const targetIndex = +req.params.index
     
-    rollbar.info('Someone deleted a student from the list')
+    rollbar.warning('Someone deleted a student from the list')
     students.splice(targetIndex, 1)
     res.status(200).send(students)
 })
 
+app.get('/api/students')
+
 const port = process.env.PORT || 5050
 
-app.listen(port, () => console.log(`Server listening on ${port}`))
+app.listen(port, function() {
+    console.log(`Server rocking out on ${port}`)
+})
